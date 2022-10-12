@@ -67,7 +67,7 @@ class OneToOneChatDialog(QDialog):
         message: str = self.chat_inputs.text()
         self.chat_inputs.clear()
 
-        # Send message
+        # Send message when not empty.
         if message:
             self.client.send_message(self.room_name, message)
             current_time = time.strftime("%H:%M", time.localtime())
