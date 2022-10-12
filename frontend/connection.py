@@ -46,6 +46,7 @@ class ConnectionWidget(QWidget):
 
         buttons = QHBoxLayout()
 
+        # connect client to server using connect method
         connect_button = QPushButton("Connect", self)
         connect_button.clicked.connect(self.connect)
         connect_button.setAutoDefault(True)
@@ -61,5 +62,37 @@ class ConnectionWidget(QWidget):
         main_layout.addLayout(buttons)
 
         self.setWindowTitle("Chatting Program")
-        self.setGeometry(500, 300, 500, 300)
+        self.setGeometry(600, 400, 500, 300)
         self.show()
+
+    """
+    Connects client to server with the provided inputs.
+    On-click for the Connect button.
+    """
+    def connect(self) -> None:
+
+        ip_address = "localhost" if self.ip_address_line_edit.text() == "" else self.ip_address_line_edit.text()
+        port: int = int(9988 if self.port_line_edit.text() == "" else self.port_line_edit.text())
+        nickname = self.nickname_line_edit.text()
+        # ip_address = self.ip_address_line_edit.text()
+        # port: int = int(self.port_line_edit.text())
+        # nickname = self.nickname_line_edit.text()
+
+        # If nickname is empty alert user.
+        if (nickname == "") or (ip_address == "") or (port == "") :
+            empty_fields = QMessageBox()
+            empty_fields.setText("Please make sure all fields are filled")
+            empty_fields.exec()
+            return
+
+        try:
+            client = ChatClient(nickname=nickname, host=ip_address, port=port)
+            self.connected_widget = ConnectedWidget(client)
+            self.connected_widget.show()
+            self.close()
+        except socket.error:
+            notify_exit = QMessageBox()
+            notify_exit.setText("Server could not be found!")
+            notify_exit.setInformativeText(
+                "Please start the server before the client, or change the server port and address.")
+            notify_exit.exec()
