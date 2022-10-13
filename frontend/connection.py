@@ -1,6 +1,6 @@
 import socket
 
-from PyQt5.QtCore import QCoreApplication, Qt
+from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QGridLayout, QLabel, QHBoxLayout, QPushButton, QMessageBox
 
 from backend.chat_client import ChatClient
@@ -79,7 +79,7 @@ class ConnectionWidget(QWidget):
         # nickname = self.nickname_line_edit.text()
 
         # If nickname is empty alert user.
-        if (nickname == "") or (ip_address == "") or (port == "") :
+        if (nickname == "") or (ip_address == "") or (port == ""):
             empty_fields = QMessageBox()
             empty_fields.setText("Please make sure all fields are filled")
             empty_fields.exec()

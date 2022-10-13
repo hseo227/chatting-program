@@ -1,11 +1,15 @@
 import time
+import socket
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QDialog, QTextBrowser, QLabel, QLineEdit, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QDialog, QTextBrowser, QLabel, QLineEdit, QPushButton, QGridLayout, QListWidget, \
+    QListWidgetItem, QWidget, QMessageBox
+from PyQt5.QtCore import Qt
 
 from backend.chat_client import ChatClient
-from backend.chat_fetching_utils import FetchGroupChat
-from backend.chat_utils import Client
+from backend.chat_fetching_utils import FetchGroupChat, FetchCurrentServer
+from backend.chat_utils import Client, send, receive
+from frontend.group_chat_invite import GroupChatInviteWidget
 
 
 class GroupChatDialog(QDialog):
@@ -104,3 +108,12 @@ class GroupChatDialog(QDialog):
 
     def invite(self):
         print("NOT IMPLEMENTED YET :(")
+        try:
+            self.group_chat_invite = GroupChatInviteWidget()
+            self.group_chat_invite.show()
+        except socket.error:
+            notify_exit = QMessageBox()
+            notify_exit.setText("Server could not be found!")
+            notify_exit.setInformativeText(
+                "Please start the server before the client, or change the server port and address.")
+            notify_exit.exec()
