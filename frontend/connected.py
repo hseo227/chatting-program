@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import QWidget, QListWidget, QVBoxLayout, QLabel, QHBoxLayo
     QInputDialog, QMessageBox
 
 from backend.chat_client import ChatClient
-from backend.backend_utils import *
-from frontend.frontend_utils import FetchServerUpdates
+from backend.chat_utils import *
+from backend.chat_fetching_utils import FetchCurrentServer
 from frontend.group_chat import GroupChatDialog
 from frontend.one_to_one_chat import OneToOneChatDialog
 
@@ -20,7 +20,7 @@ class ConnectedWidget(QWidget):
         self.client: ChatClient = client
         self.one_to_one_chat_widgets = []
 
-        self.fetch = FetchServerUpdates(client=self.client, parent=self)
+        self.fetch = FetchCurrentServer(client=self.client, parent=self)
         self.fetch.updates_fetched.connect(self.server_updates)
         self.fetch.start()
 
@@ -58,7 +58,7 @@ class ConnectedWidget(QWidget):
         chat_room_buttons.addWidget(create_room_button)
 
         join_chat_button = QPushButton("Join", self)
-        join_chat_button.clicked.connect(self.join_room)
+        join_chat_button.clicked.connect(self.join)
         chat_room_buttons.addWidget(join_chat_button)
 
         main_layout.addLayout(chat_rooms_layout)
@@ -118,7 +118,7 @@ class ConnectedWidget(QWidget):
             notify_non_empty_nickname.exec()
             return
         else:
-            self.fetch.stop()
+            self.fetch.stop_thread()
             self.fetch.wait()
 
         # Setting and changing a variable (status) for use in backend.
@@ -169,8 +169,8 @@ class ConnectedWidget(QWidget):
             new_chat_room.setData(Qt.UserRole, (chat_room_name, self.client.client_from_server))
             self.chat_rooms.addItem(new_chat_room)
 
-    def join_room(self) -> None:
-        self.fetch.stop()
+    def join(self) -> None:
+        self.fetch.stop_thread()
         self.fetch.wait()
 
         # Alert user that a room needs to be selected.
@@ -183,7 +183,7 @@ class ConnectedWidget(QWidget):
 
         chat_info = self.chat_rooms.currentItem().data(Qt.UserRole)
 
-        self.client.join_room(chat_info)
+        self.client.join(chat_info)
 
         one_to_one_chat = GroupChatDialog(client=self.client, room_info=chat_info, parent=self)
         one_to_one_chat.exec()
@@ -192,6 +192,6 @@ class ConnectedWidget(QWidget):
         self.fetch.start()
 
     def close_program(self) -> None:
-        self.fetch.stop()
+        self.fetch.stop_thread()
         self.fetch.wait()
         QCoreApplication.instance().quit()

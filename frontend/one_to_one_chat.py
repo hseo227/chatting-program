@@ -2,7 +2,7 @@ import time
 from PyQt5.QtWidgets import QDialog, QTextBrowser, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton
 
 from backend.chat_client import ChatClient
-from frontend.frontend_utils import FetchMessage
+from backend.chat_fetching_utils import FetchMessage
 
 """
 1:1 Chat window for users to chat to another user.
@@ -58,7 +58,7 @@ class OneToOneChatDialog(QDialog):
         self.show()
 
     def close_chat(self) -> None:
-        self.fetch_message_thread.stop()
+        self.fetch_message_thread.stop_thread()
         self.client.leave_one_to_one()
         self.accept()
 

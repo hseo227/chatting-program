@@ -3,58 +3,40 @@ import time
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from backend.chat_client import ChatClient
-from backend.backend_utils import Client
+from backend.chat_utils import Client
 
 
-class FetchGroupMessage(QThread):
-    """
-    Fetches messages to the client,
-    and emits fetched list of chats messages to the connected listener. (FetchMessage#chat_fetched)
-    """
+class FetchGroupChat(QThread):
+
     chat_fetched = pyqtSignal(object)
     members_fetched = pyqtSignal(object)
 
     def __init__(self, client: ChatClient, room_info: tuple[str, Client] = None, parent=None):
-        super(FetchGroupMessage, self).__init__(parent)
+        super(FetchGroupChat, self).__init__(parent)
         self.client = client
         self.room_info = room_info
         self.thread_alive = False
 
     def run(self):
-        """
-        Method that runs when FetchMessage#start() is run.
 
-        It runs in a loop that continuously fetches messages in real time.
-        """
         self.thread_alive = True
-        # print("Fetch Message Thread alive!")
 
-        # Iterate until the thread is considered dead.
+        # Iterate until the thread is dead.
         while self.thread_alive:
             # Fetch messages and emit each message to the connected listener.
             # Merge them to both.
-            chat_client_list: list[Client] = self.client.fetch_clients_in_room(self.room_info)
-            # print(f"clients in chat to emit: {chat_client_list}")
+            chat_client_list: list[Client] = self.client.get_clients_in_room(self.room_info)
             self.members_fetched.emit(chat_client_list)
 
             messages: list[str] = self.client.fetch_messages()
-            # print(f"messages to emit: {messages}")
             [self.chat_fetched.emit(message) for message in messages]
 
-            # if self.room_info:
-
-    def stop(self):
-        """
-        Stops the thread.
-        """
+    def stop_thread(self):
         self.thread_alive = False
 
 
 class FetchMessage(QThread):
-    """
-    Fetches messages to the client,
-    and emits fetched list of chats messages to the connected listener. (FetchMessage#chat_fetched)
-    """
+
     chat_fetched = pyqtSignal(object)
 
     def __init__(self, client: ChatClient, parent=None):
@@ -63,56 +45,42 @@ class FetchMessage(QThread):
         self.thread_alive = False
 
     def run(self):
-        """
-        Method that runs when FetchMessage#start() is run.
 
-        It runs in a loop that continuously fetches messages in real time.
-        """
         self.thread_alive = True
-        # print("Fetch Message Thread alive!")
 
-        # Iterate until the thread is considered dead.
+        # Iterate until the thread is dead.
         while self.thread_alive:
             # Fetch messages and emit each message to the connected listener.
             messages: list[str] = self.client.fetch_messages()
-            # print(f"messages to emit: {messages}")
             [self.chat_fetched.emit(message) for message in messages]
 
-    def stop(self):
-        """
-        Stops the thread.
-        """
+    def stop_thread(self):
         self.thread_alive = False
 
 
-class FetchServerUpdates(QThread):
-    """
-    Fetches list of clients currently connected in the server,
-    and emits fetched list of clients to the connected listener. (FetchClients#clients_fetched)
-    """
+class FetchCurrentServer(QThread):
+
     updates_fetched = pyqtSignal(object)
 
     def __init__(self, client: ChatClient, parent=None):
-        super(FetchServerUpdates, self).__init__(parent)
+        super(FetchCurrentServer, self).__init__(parent)
         self.client = client
         self.thread_alive = False
 
     def run(self):
         self.thread_alive = True
-        # print("Fetch Server Update Thread Started!")
 
-        # Iterate until the thread is considered dead.
+        # Iterate until the thread is dead.
         while self.thread_alive:
             clients: list[tuple[str, tuple[str, int]]] = []
-            # updates: tuple[list[tuple[str, tuple[str, int]]], list[str]]
 
-            # Retrieve a list of clients currently connected and list them in the list of clients.
-            connected_clients, group_chat_rooms = self.client.get_server_update()
-            # print(f"connected_clients: {connected_clients}")
+            # Retrieve a list of clients currently connected.
+            connected_clients, group_chat_rooms = self.client.get_clients_in_server()
 
-            # Format each client information into client information form used for clients list.
             current_time = time.time()
+
             for client in connected_clients:
+
                 seconds_elapsed = current_time - client[2]
                 hours, rest = divmod(seconds_elapsed, 3600)
                 minutes, seconds = divmod(rest, 60)
@@ -127,21 +95,13 @@ class FetchServerUpdates(QThread):
                 else:
                     time_passed = "now"
 
-                # Possibly add [me] label if it's the person.
                 me_notifier = " [me]" if client[0][1] == self.client.connected_port else ""
 
-                # Convention: ("Alice (12 min ago)", "Alice", 12593)
                 clients.append((f"{client[1]}{me_notifier} ({time_passed})", (client[1], client[0][1])))
 
-            # Emit clients fetched
-            # Convention: ([("Alice (12 min ago)", "Alice", 12593)], [])
             self.updates_fetched.emit((clients, group_chat_rooms))
 
-            # To put a fetching interval.
             time.sleep(1)
 
-    def stop(self):
-        """
-        Stop the thread.
-        """
+    def stop_thread(self):
         self.thread_alive = False

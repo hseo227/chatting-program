@@ -4,8 +4,8 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog, QTextBrowser, QLabel, QLineEdit, QPushButton, QGridLayout
 
 from backend.chat_client import ChatClient
-from backend.backend_utils import Client
-from frontend.frontend_utils import FetchGroupMessage
+from backend.chat_fetching_utils import FetchGroupChat
+from backend.chat_utils import Client
 
 
 class GroupChatDialog(QDialog):
@@ -29,7 +29,7 @@ class GroupChatDialog(QDialog):
         self.send_button = QPushButton("Send", self)
         self.send_image_button = QPushButton("Send Image", self)
 
-        self.fetch_message_thread = FetchGroupMessage(client=self.client, room_info=self.room_info, parent=self)
+        self.fetch_message_thread = FetchGroupChat(client=self.client, room_info=self.room_info, parent=self)
         self.fetch_message_thread.chat_fetched.connect(self.chats.append)
         self.fetch_message_thread.members_fetched.connect(self.update_members)
         self.fetch_message_thread.start()
@@ -84,8 +84,8 @@ class GroupChatDialog(QDialog):
 
     def close_chat(self) -> None:
         # When host closes group chat, chat gets removed from server.
-        self.fetch_message_thread.stop()
-        self.client.leave_room(self.room_info)
+        self.fetch_message_thread.stop_thread()
+        self.client.leave(self.room_info)
         self.accept()
 
     def send(self) -> None:

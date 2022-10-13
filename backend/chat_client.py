@@ -1,7 +1,7 @@
 import select
 import ssl
 
-from backend.backend_utils import *
+from backend.chat_utils import *
 
 
 class ChatClient:

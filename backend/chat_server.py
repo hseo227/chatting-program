@@ -3,7 +3,7 @@ import signal
 import ssl
 import sys
 
-from backend.backend_utils import *
+from backend.chat_utils import *
 
 
 class ChatServer:
