@@ -58,7 +58,7 @@ class ConnectedWidget(QWidget):
         chat_room_buttons.addWidget(create_room_button)
 
         join_chat_button = QPushButton("Join", self)
-        join_chat_button.clicked.connect(self.join)
+        join_chat_button.clicked.connect(self.join_group_chat)
         chat_room_buttons.addWidget(join_chat_button)
 
         main_layout.addLayout(chat_rooms_layout)
@@ -169,7 +169,8 @@ class ConnectedWidget(QWidget):
             new_chat_room.setData(Qt.UserRole, (chat_room_name, self.client.client_from_server))
             self.chat_rooms.addItem(new_chat_room)
 
-    def join(self) -> None:
+    def join_group_chat(self) -> None:
+
         self.fetch.stop_thread()
         self.fetch.wait()
 

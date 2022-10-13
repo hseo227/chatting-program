@@ -25,6 +25,8 @@ class GroupChatDialog(QDialog):
         self.client = client
         self.room_info = room_info
         self.room_name, self.room_host = self.room_info
+        # self.chat_rooms = QListWidget()
+        # self.connected_clients = QListWidget()
 
         self.members = QTextBrowser()
         self.chats = QTextBrowser()
@@ -37,6 +39,10 @@ class GroupChatDialog(QDialog):
         self.fetch_message_thread.chat_fetched.connect(self.chats.append)
         self.fetch_message_thread.members_fetched.connect(self.update_members)
         self.fetch_message_thread.start()
+
+        # self.fetch = FetchCurrentServer(client=self.client, parent=self)
+        # # self.fetch.updates_fetched.connect(self.server_updates)
+        # self.fetch.start()
 
         self.init_ui()
 
@@ -86,6 +92,44 @@ class GroupChatDialog(QDialog):
                 member_name += " (me)"
             self.members.append(member_name)
 
+    # @pyqtSlot(object)
+    # def server_updates(self, updates: tuple[list[tuple[str, tuple[str, int]]], list[tuple[str, Client]]]) -> None:
+    #
+    #     clients, group_chat_rooms = updates
+    #
+    #     port_numbers: list[int] = [self.connected_clients.item(i).data(Qt.UserRole)[1]
+    #                                for i in range(self.connected_clients.count())]
+    #
+    #     for c in clients:
+    #         if c[1][1] in port_numbers:
+    #             # Set texts to corresponding clients.
+    #             self.connected_clients.item(port_numbers.index(c[1][1])).setText(c[0])
+    #             port_numbers[port_numbers.index(c[1][1])] = -1
+    #         else:
+    #             new_client = QListWidgetItem(c[0])
+    #             new_client.setData(Qt.UserRole, c[1])
+    #             self.connected_clients.addItem(new_client)
+    #
+    #     removed = 0
+    #     for i, port in enumerate(port_numbers):
+    #         if port != -1:
+    #             self.connected_clients.takeItem(i - removed)
+    #             removed += 1
+    #
+    #     existing_group_chats: list[tuple[str, Client]] = [self.chat_rooms.item(i).data(Qt.UserRole)
+    #                                                       for i in range(self.chat_rooms.count())]
+    #
+    #     rooms_to_add = list(set(group_chat_rooms) - set(existing_group_chats))
+    #     rooms_to_remove = list(set(existing_group_chats) - set(group_chat_rooms))
+    #
+    #     for room in rooms_to_add:
+    #         new_room = QListWidgetItem(f"{room[0]} by {room[1][1]}")
+    #         new_room.setData(Qt.UserRole, room)
+    #         self.chat_rooms.addItem(new_room)
+    #
+    #     for removed_rooms, room in enumerate(rooms_to_remove):
+    #         self.chat_rooms.takeItem(existing_group_chats.index(room) - removed_rooms)
+
     def close_chat(self) -> None:
         # When host closes group chat, chat gets removed from server.
         self.fetch_message_thread.stop_thread()
@@ -107,9 +151,23 @@ class GroupChatDialog(QDialog):
         print("NOT IMPLEMENTED YET :(")
 
     def invite(self):
-        print("NOT IMPLEMENTED YET :(")
+        # # print("NOT IMPLEMENTED YET :(")
+        #
+        # # self.fetch.stop_thread()
+        # # self.fetch.wait()
+        # #
+        # # chat_info = self.chat_rooms.currentItem().data(Qt.UserRole)
+        # # self.client.join(chat_info)
+        # #
+        # group_chat_invite = GroupChatInviteWidget(self.client)
+        # group_chat_invite.show()
+        # # group_chat_invite.exec()
+        # #
+        # # # Start updating client list again.
+        # # self.fetch.start()
+
         try:
-            self.group_chat_invite = GroupChatInviteWidget()
+            self.group_chat_invite = GroupChatInviteWidget(self.client)
             self.group_chat_invite.show()
         except socket.error:
             notify_exit = QMessageBox()
