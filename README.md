@@ -27,7 +27,7 @@ git clone https://github.com/hseo227/chatting-program.git
 
 ### Executing program
 
-Open terminal and run `server.py` and `client.py` from the root directory of this repository (`hseo227_source_code`).
+Open terminal and run `server.py` and `client.py` from the root directory of this repository **(i.e. `hseo227_source_code`)**.
 Make sure to run `server.py` prior to running `client.py`.
 
 A reminder to check the python version before running the program.
@@ -36,13 +36,17 @@ You can do this by running the following command:
 python --version
 ```
 
-Finally, to run:
+Run the server first, then the client
+```bash
+python server.py --name=NAME --port=PORT
+```
+(For example: --name=localhost --port=9988)
+
+and
 ```bash
 python client.py
 ```
-and
-```bash
-python server.py
-```
+When client.py is run, make sure to enter the correct, or corresponding, IP address and Port number to the server.
+
 **On Mac, python 3 can be run by using the command `python3` rather than `python`.
 And consequently, use `python3` to check and run python 3 version.*
