@@ -158,9 +158,9 @@ class ConnectedWidget(QWidget):
                 if status == "SUCCESS":
                     room_created = True
                 else:
-                    room_name, create_room = QInputDialog.getText(self, "Create Chat Room",
+                    chat_room_name, create_room = QInputDialog.getText(self, "Create Chat Room",
                                                                   "Provided chat room name already exists.\n"
-                                                                  "Enter another chat room name: ")
+                                                                  "Please try another chat room name")
                     if not create_room:
                         return
 
