@@ -71,12 +71,9 @@ class ConnectionWidget(QWidget):
     """
     def connect(self) -> None:
 
-        ip_address = "localhost" if self.ip_address_line_edit.text() == "" else self.ip_address_line_edit.text()
-        port: int = int(9988 if self.port_line_edit.text() == "" else self.port_line_edit.text())
+        ip_address = self.ip_address_line_edit.text()
+        port: int = int(self.port_line_edit.text())
         nickname = self.nickname_line_edit.text()
-        # ip_address = self.ip_address_line_edit.text()
-        # port: int = int(self.port_line_edit.text())
-        # nickname = self.nickname_line_edit.text()
 
         # If nickname is empty alert user.
         if (nickname == "") or (ip_address == "") or (port == ""):

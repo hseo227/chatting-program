@@ -39,7 +39,6 @@ class ConnectedWidget(QWidget):
         connected_clients_layout.addWidget(self.connected_clients)
         chat_button = QPushButton("1:1 Chat", self)
         connected_clients_layout.addWidget(chat_button)
-        #
         chat_button.clicked.connect(self.one_to_one_chat)
 
         main_layout.addLayout(connected_clients_layout)
