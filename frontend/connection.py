@@ -75,8 +75,8 @@ class ConnectionWidget(QWidget):
         port: int = int(self.port_line_edit.text())
         nickname = self.nickname_line_edit.text()
 
-        # If nickname is empty alert user.
-        if (nickname == "") or (ip_address == "") or (port == ""):
+        # If any of input fields are empty
+        if (nickname == "") or (ip_address == "") or (self.port_line_edit.text() == ""):
             empty_fields = QMessageBox()
             empty_fields.setText("Please make sure all fields are filled")
             empty_fields.exec()
