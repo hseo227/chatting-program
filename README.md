@@ -27,7 +27,7 @@ git clone https://github.com/hseo227/chatting-program.git
 
 ### Executing program
 
-Open terminal and run `server.py` and `client.py` from the root directory of this repository **(i.e. `hseo227_source_code`)**.
+Open terminal and run `server.py` and `client.py` from the root directory of this repository **(i.e. `source_code_hseo227`)**.
 Make sure to run `server.py` prior to running `client.py`.
 
 A reminder to check the python version before running the program.
